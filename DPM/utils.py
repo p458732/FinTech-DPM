@@ -1,6 +1,8 @@
+import torch.nn
+import numpy as np
 def init_weight(m):
     if hasattr(m, 'weight') and m.weight.dim() > 1:
-        nn.init.kaiming_uniform_(m.weight.data,a=0, mode='fan_in', nonlinearity='sigmoid')
+        torch.nn.init.kaiming_uniform_(m.weight.data,a=0, mode='fan_in', nonlinearity='sigmoid')
 
 
 def calculate_pv_after_commission(w1, w0, commission_rate):

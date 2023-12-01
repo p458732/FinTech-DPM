@@ -13,7 +13,7 @@ import torch.nn as nn
 from pgportfolio.marketdata.datamatrices import DataMatrices
 from pgportfolio.tools.configprocess import preprocess_config
 
-
+from tqdm import tqdm, trange
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -57,7 +57,7 @@ parser.add_argument('--test_portion', type=float, default=0.08,
 parser.add_argument('--smoothing_days', type=int, default=5,
                     help='smoothing days (default: 5)')
 
-parser.add_argument('--stocks', type=int, default=1,
+parser.add_argument('--stocks', type=int, default=0,
                     help='smoothing days (default: 1)')
 parser.add_argument('--buffer_biased', type=float, default=5e-5,
                     help='buffer_biased for sampling (default: 5e-5)') #stock 2e-4 #btc 5e-5
@@ -175,7 +175,7 @@ def main():
         pi.sarl_net.eval()
 
     pi.net.train()
-    for n_epi in range(args.num_steps): 
+    for n_epi in tqdm(range(args.num_steps)): 
 
         batch = matrix.next_batch(args.n_episode)
 
@@ -236,7 +236,7 @@ def main():
             results_dict['eval_actions'].append((b, prob.detach().cpu().numpy()))
             results_dict['eval_returns'].append((b, pv_vector.detach().cpu().numpy()))
 
-        if b%30 == 0:
+        if b%1 == 0:
             print('n_epi', b, 'pv', portfolio_value)
             with open(base_dir + '/results', 'wb') as f:
                 pickle.dump(results_dict, f)

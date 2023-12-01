@@ -14,7 +14,7 @@ MIN_NUM_PERIOD = 3
 
 class DataMatrices:
     def __init__(self, start, end, period, batch_size=50, volume_average_days=30, buffer_bias_ratio=0,
-                 market="poloniex", coin_filter=1, window_size=50, feature_number=3, test_portion=0.15,
+                 market="poloniex", coin_filter=1, window_size=50, feature_number=5, test_portion=0.15,
                  portion_reversed=False, online=False, is_permed=False, stock=False, smoothing_days=5):
         """
         :param start: Unix time
@@ -220,4 +220,3 @@ class DataMatrices:
         self._num_train_samples = len(self._train_ind)
         self._num_test_samples = len(self.test_indices)
         print('4', self._num_train_samples, self._num_test_samples)
-
