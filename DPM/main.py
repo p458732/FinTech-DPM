@@ -119,13 +119,7 @@ def main():
                     }
 
 
-    base_dir = (os.getcwd() + '/models_0911_sarl/' + '/RT(stock_layer)-NoVAL-stock_'+ str(stock) + '-seed_' + str(args.seed) + '/' +
-                                'lr_' + str(args.lr) + '-steps_' + str(args.num_steps) + '-rolling_' + str(args.rolling_steps) +
-                                '-smooth_' + str(args.smoothing_days) + '-nri_d_' + str(args.nri_d) + '-cnn_d_' + str(args.cnn_d) +
-                                '-cnn_d2_' + str(args.cnn_d2) +
-                                '-nri_batch_shuffle_' + str(args.nri_shuffle) + '-input_shift_' + str(args.input_shift) +
-                                '-nri_lr_' + str(args.nri_lr)  + '-l2_w'+ str(args.L2_w) + '-l3_w'+ str(args.L3_w) +
-                                '-n_episode' + str(args.n_episode)  + '-model' + args.model_name  +'/' )
+    base_dir = ('./' )
 
     run_number = 0
     while os.path.exists(base_dir + str(run_number)):
@@ -204,7 +198,7 @@ def main():
 
     steps = 0
 
-    for b, i in enumerate(test_set['X']):
+    for b, i in tqdm(enumerate(test_set['X'])):
         with torch.no_grad():
             i = torch.from_numpy(i).float().to(device).unsqueeze(0)
             pi.net.eval()
@@ -223,7 +217,7 @@ def main():
 
             w_t = last_action.squeeze(0).cpu().detach().numpy()  # [?, 12]
             w_t1 = prob.squeeze(0).cpu().detach().numpy()
-            mu = calculate_pv_after_commission(w_t1, w_t, 0.0025)
+            mu = calculate_pv_after_commission(w_t1, w_t, 0.003)
 
 
             pv_vector = torch.sum(prob * future_price, 1) * mu
@@ -236,7 +230,7 @@ def main():
             results_dict['eval_actions'].append((b, prob.detach().cpu().numpy()))
             results_dict['eval_returns'].append((b, pv_vector.detach().cpu().numpy()))
 
-        if b%1 == 0:
+        if b%30 == 0:
             print('n_epi', b, 'pv', portfolio_value)
             with open(base_dir + '/results', 'wb') as f:
                 pickle.dump(results_dict, f)

@@ -10,9 +10,17 @@ from pgportfolio.constants import *
 import sqlite3
 from datetime import datetime
 import logging
+import pickle
 
 
-
+def get_TW_stocks(stock_ids):
+    stocks = []
+    for id in stock_ids:
+        stock_data = pd.read_csv(f'./pgportfolio/data/data_{id}.csv',index_col=False).to_numpy()
+        stock_data = np.delete(stock_data, 0, 1)
+        stocks.append(stock_data)
+    stocks = np.vstack(stocks).reshape((9,-1,7))
+    return stocks
 def get_global_panel_stock(start, end, period=300, features=('close',)):
     """
     :param start/end: linux timestamp in seconds
@@ -20,9 +28,10 @@ def get_global_panel_stock(start, end, period=300, features=('close',)):
     :param features: tuple or list of the feature names
     :return a panel, [feature, coin, time]
     """
-    stock = np.load('pgportfolio/data/stock.npy', allow_pickle=True)
-    coins = ['GOOG', 'NVDA', 'AMZN', 'AMD', 'QCOM', 'INTC', 'MSFT', 'AAPL', 'BIDU']
-
+    
+     
+    coins = ['2883', '2317','2454', '2303', '3231', '3008', '2352', '2330', '2412']
+    stock = get_TW_stocks(coins)
     logging.info("feature type list is %s" % str(features))
 
     stock_cols = ['date', 'high', 'low', 'open', 'close', 'volume', 'quoteVolume']
