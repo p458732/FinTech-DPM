@@ -11,7 +11,7 @@ res = []
 for stock in stocks:    
     stock_id = stock + '.TW'
     data = yf.Ticker(stock_id)
-    df = data.history(period="max")
+    df = data.history(period="max", repair=True)
     df['date'] = df.index
     df = df[['date', 'High', 'Low', 'Open', 'Close', 'Volume', 'Volume']].rename(columns={'High': 'high', 'Low':'low', 'Open': 'open', 'Close': 'close', 'Volume': 'volume'})
     df_np = df.to_numpy()

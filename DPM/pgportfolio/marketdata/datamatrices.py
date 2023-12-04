@@ -126,9 +126,8 @@ class DataMatrices:
 
     @property
     def test_indices(self):
-        # TODO WHY?
-        return self._test_ind[:]
-        #return self._test_ind[:-(self._window_size+1):]
+        
+        return self._test_ind[:-(self._window_size - 1):]
 
     @property
     def num_test_samples(self):

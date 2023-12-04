@@ -101,7 +101,7 @@ stock = args.stocks
 if stock ==0:
     action_n = 10 # stock 10 btc 11
     args.buffer_biased = 2e-4
-    args.test_portion = 0.014
+    args.test_portion = 0.165
 else:
     action_n = 11 # stock 10 btc 11
 
@@ -182,7 +182,7 @@ def main():
 
     last_action = torch.from_numpy(last_action).float().to(device).unsqueeze(0)
     portfolio_value = 1
-
+    torch.save(pi, base_dir+'/model.pt')
     steps = 0
 
     for b, i in tqdm(enumerate(test_set['X'])):
@@ -206,7 +206,7 @@ def main():
             pv_vector = torch.sum(prob * future_price, 1) * mu
             portfolio_value *= pv_vector.item()
 
-            assert portfolio_value != "nan"
+            
             last_action = prob * future_price / torch.sum(prob * future_price, 1)
 
             results_dict['eval_rewards'].append((b, portfolio_value))
