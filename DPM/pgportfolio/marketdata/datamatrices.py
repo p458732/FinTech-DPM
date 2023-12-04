@@ -126,7 +126,9 @@ class DataMatrices:
 
     @property
     def test_indices(self):
-        return self._test_ind[:-(self._window_size+1):]
+        # TODO WHY?
+        return self._test_ind[:]
+        #return self._test_ind[:-(self._window_size+1):]
 
     @property
     def num_test_samples(self):
@@ -143,6 +145,7 @@ class DataMatrices:
         self.__replay_buffer.append_experience(appended_index)
 
     def get_test_set(self):
+        print(self.test_indices)
         return self.__pack_samples(self.test_indices)
 
     def get_training_set(self):

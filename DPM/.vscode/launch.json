@@ -1,0 +1,51 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: run_classifier.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            // "program": "${workspaceFolder}/train.py",
+            "console": "integratedTerminal",
+            // "env": {  
+            //     "CUDA_VISIBLE_DEVICES": "0",
+            //     // "CUDA_LAUNCH_BLOCKING": "1",
+            // },
+            "justMyCode": true, // 如果是false的话就会进到别的子程序里面，为了调试的直观，设置true比较好
+            // true就是调试的范围都是你写的代码
+            "args": [
+                "--model_name",
+                "dpm_v2",
+                "--n_episode",
+                "50",
+                "--lr",
+                "0.00015",
+                "--num_steps",
+                "18",
+                "--rolling_steps",
+                "50",
+                "--nri_d",
+                "32",
+                "--seed",
+                "123",
+                "--stocks",
+                "0",
+                "--smoothing_days",
+                "5",
+                "--cnn_d",
+                "50",
+                "--nri_shuffle",
+                "20",
+                "--nri_lr",
+                "0.00015",
+                "--cnn_d2",
+                "25",
+                "--L2_w",
+                "0",
+                "--L3_w",
+                "0"
+            ]
+        }
+    ]
+}

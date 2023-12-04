@@ -101,7 +101,7 @@ stock = args.stocks
 if stock ==0:
     action_n = 10 # stock 10 btc 11
     args.buffer_biased = 2e-4
-    args.test_portion = 0.1605
+    args.test_portion = 0.014
 else:
     action_n = 11 # stock 10 btc 11
 
@@ -119,7 +119,7 @@ def main():
                     }
 
 
-    base_dir = ('./' )
+    base_dir = ('./experiments/' )
 
     run_number = 0
     while os.path.exists(base_dir + str(run_number)):
@@ -154,19 +154,6 @@ def main():
 
     test_set = matrix.get_test_set()
     training_set = matrix.get_training_set()
-
-    if 'sarl' in args.model_name:
-        pi.sarl_net.train()
-        for n_epi in range(args.num_steps): 
-            batch = matrix.next_batch(args.n_episode)
-
-            x = torch.from_numpy(batch["X"]) 
-            y = torch.from_numpy(batch["y"]) 
-            last_w = torch.from_numpy(batch["last_w"]) 
-            setw = batch["setw"]
-            y_cont = torch.from_numpy(batch['y_cont'])
-            sarl_loss = pi.sarl_net.sarl_train_net(x, y, last_w=last_w,  y_cont=y_cont, device=device)
-        pi.sarl_net.eval()
 
     pi.net.train()
     for n_epi in tqdm(range(args.num_steps)): 
@@ -204,11 +191,7 @@ def main():
             pi.net.eval()
             
 
-            if 'sarl' in args.model_name:
-                pred, _ = pi.sarl_net(i.to(device).float())
-                prob, _ = pi.net(i, last_action[:,1:],  pred.detach().argmax(dim=1))
-            else:
-                prob, _ = pi.net(i, last_action[:,1:])
+            prob, _ = pi.net(i, last_action[:,1:])
 
             y = torch.from_numpy(test_set["y"][b]).to(device).float().unsqueeze(0)
 
@@ -223,7 +206,7 @@ def main():
             pv_vector = torch.sum(prob * future_price, 1) * mu
             portfolio_value *= pv_vector.item()
 
-
+            assert portfolio_value != "nan"
             last_action = prob * future_price / torch.sum(prob * future_price, 1)
 
             results_dict['eval_rewards'].append((b, portfolio_value))
@@ -234,27 +217,9 @@ def main():
             print('n_epi', b, 'pv', portfolio_value)
             with open(base_dir + '/results', 'wb') as f:
                 pickle.dump(results_dict, f)
-
-
-        # rolling
-
+        # online learning
         if rolling:
             matrix.append_experience(None)
-            
-            if 'sarl' in args.model_name:
-                pi.sarl_net.train()
-                for i in range(args.rolling_steps): 
-                    batch = matrix.next_batch(args.n_episode)
-
-                    x = torch.from_numpy(batch["X"]) 
-                    y = torch.from_numpy(batch["y"]) 
-                    last_w = torch.from_numpy(batch["last_w"]) 
-                    setw = batch["setw"]
-                    y_cont = torch.from_numpy(batch['y_cont'])
-
-                    sarl_loss = pi.sarl_net.sarl_train_net(x, y, last_w=last_w, y_cont=y_cont, device=device)
-                pi.sarl_net.eval()
-
             pi.net.train()
             for i in range(args.rolling_steps): 
                 steps += 1

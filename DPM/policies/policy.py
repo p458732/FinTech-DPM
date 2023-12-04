@@ -64,11 +64,8 @@ class Conv4_Policy(nn.Module):
         kl= torch.tensor(0)
 
         self.net.optimizer.zero_grad()
-        if 'sarl' in args.model_name :
-            pred, _ = self.sarl_net(x)
-            prob, _ = self.net(x, last_w,  pred.detach().argmax(dim=1))
-        else:
-            prob, re = self.net(x, last_w)
+        
+        prob, re = self.net(x, last_w)
         
 
         pv_vector, baseline, _ = cal_pv(y, prob)

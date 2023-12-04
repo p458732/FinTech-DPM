@@ -38,6 +38,7 @@ def get_global_panel_stock(start, end, period=300, features=('close',)):
 
     time_index = pd.to_datetime(stock[0, :, 0])
     print(time_index)
+    
     panel = pd.Panel(items=features, major_axis=coins, minor_axis=time_index, dtype=np.float32)
 
 
